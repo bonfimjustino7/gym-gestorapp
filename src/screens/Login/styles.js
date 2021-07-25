@@ -9,7 +9,7 @@ export const Overlay = styled.View`
   position: absolute;
   width: 100%;
   background-color: #333;
-  height: 320px;
+  height: 360px;
   bottom: 0;
   left: 0;
   opacity: 0.5;
