@@ -1,7 +1,6 @@
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {createStackNavigator} from '@react-navigation/stack';
-import DrawerScreens from './drawer';
 import Perfil from './screens/Perfil';
 import Home from './screens/Home';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,7 +13,11 @@ function InitialStackScreen() {
     <InitialStack.Navigator
       screenOptions={({navigation}) => {
         return {
-          headerStyle: {backgroundColor: '#257AC9'},
+          headerStyle: {
+            backgroundColor: '#257AC9',
+            elevation: 0,
+            shadowOpacity: 0,
+          },
           headerTintColor: '#fff',
           headerTitleAlign: 'center',
           headerLeft: () => (
@@ -26,9 +29,18 @@ function InitialStackScreen() {
               style={{paddingLeft: 10}}
             />
           ),
+          headerRight: () => (
+            <MaterialIcons
+              name="help-circle-outline"
+              size={30}
+              color="#fff"
+              onPress={() => console.log('help')}
+              style={{paddingRight: 10}}
+            />
+          ),
         };
       }}>
-      <InitialStack.Screen name="Inicial" component={Home} />
+      <InitialStack.Screen name="Home" component={Home} />
     </InitialStack.Navigator>
   );
 }

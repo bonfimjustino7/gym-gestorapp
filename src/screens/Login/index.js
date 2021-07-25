@@ -9,12 +9,39 @@ import {Container, Overlay} from './styles';
 
 import Logo from '../../assets/GYM.svg';
 import {Formik} from 'formik';
-import {Auth} from '../../services/auth';
-import {useFocusEffect} from '@react-navigation/native';
-import {useCallback} from 'react';
+
+import Toast from 'react-native-toast-message';
+import {BASE_API} from '../../services/api';
+import {useAuth} from '../../context/auth';
+import {storeData} from '../../services/store';
 
 export default function Login({navigation}) {
   const [buttonLogin, setLoading] = useState(false);
+  const {setAuth} = useAuth();
+
+  async function loginHandler(dataValues) {
+    try {
+      const responseData = await BASE_API.post('/auth/', dataValues);
+      const {data} = responseData;
+
+      setAuth(data);
+      storeData('@user', data);
+
+      navigation.navigate('HomeDrawer');
+    } catch ({response}) {
+      if (response?.status === 400) {
+        return 'ERROR_SENHA';
+      } else {
+        Toast.show({
+          text1: 'Não foi possivel realizar a requisição',
+          text2: response,
+          type: 'error',
+          position: 'bottom',
+        });
+        return null;
+      }
+    }
+  }
 
   const validate = Yup.object({
     email: Yup.string()
@@ -37,7 +64,7 @@ export default function Login({navigation}) {
             validationSchema={validate}
             onSubmit={async (values, form) => {
               setLoading(true);
-              const res = await Auth(values);
+              const res = await loginHandler(values);
               if (res === 'OK') {
                 setLoading(false);
                 navigation.navigate('HomeDrawer');
