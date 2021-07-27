@@ -24,10 +24,15 @@ export default function Login({navigation}) {
       const responseData = await BASE_API.post('/auth/', dataValues);
       const {data} = responseData;
 
-      setAuth(data);
-      storeData('@user', data);
+      if (data.is_academia) {
+        setAuth(data);
+        storeData('@user', data);
 
-      navigation.navigate('HomeDrawer');
+        navigation.navigate('HomeDrawer');
+      } else {
+        console.log(data);
+        return 'ERROR_CONTA';
+      }
     } catch ({response}) {
       if (response?.status === 400) {
         return 'ERROR_SENHA';
@@ -55,21 +60,20 @@ export default function Login({navigation}) {
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Logo />
       </View>
-      <View
-        style={{
-          height: 320,
-        }}>
+      <View>
         <ScrollView>
           <Formik
             validationSchema={validate}
             onSubmit={async (values, form) => {
               setLoading(true);
               const res = await loginHandler(values);
-              if (res === 'OK') {
-                setLoading(false);
-                navigation.navigate('HomeDrawer');
-              } else if (res === 'ERROR_SENHA') {
+              if (res === 'ERROR_SENHA') {
                 form.setFieldError('password', 'Email ou senha incorreto');
+              } else if (res === 'ERROR_CONTA') {
+                form.setFieldError(
+                  'password',
+                  'Não existe nenhuma academia com esta crendecial',
+                );
               }
               setLoading(false);
             }}
@@ -98,7 +102,7 @@ export default function Login({navigation}) {
                 />
                 {touched.password && errors.password ? (
                   <Text style={{color: 'red', fontSize: 10}}>
-                    Email e/ou senha inválidos
+                    {errors.password}
                   </Text>
                 ) : null}
                 <Button

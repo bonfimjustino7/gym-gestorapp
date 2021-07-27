@@ -35,23 +35,30 @@ export default function RootStack({navigation}) {
     return <SplashScreen />;
   }
 
-  if (user !== null) {
-    return (
-      <Stack.Navigator>
-        <Stack.Screen
-          name="HomeDrawer"
-          component={RouterDrawer}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
-    );
-  }
+  // if (user !== null) {
+  //   return (
+  //     <Stack.Navigator>
+  //       <Stack.Screen
+  //         name="HomeDrawer"
+  //         component={RouterDrawer}
+  //         options={{
+  //           headerShown: false,
+  //         }}
+  //       />
+  //       <Stack.Screen
+  //         name="Login"
+  //         component={Login}
+  //         options={{
+  //           headerShown: false,
+  //         }}
+  //       />
+  //     </Stack.Navigator>
+  //   );
+  // }
 
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName={user !== null ? 'HomeDrawer' : 'Login'}
       screenOptions={{
         headerStyle: {backgroundColor: '#257AC9'},
         headerTintColor: '#fff',

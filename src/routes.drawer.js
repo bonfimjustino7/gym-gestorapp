@@ -34,7 +34,7 @@ function InitialStackScreen() {
               name="help-circle-outline"
               size={30}
               color="#fff"
-              onPress={() => console.log('help')}
+              onPress={() => navigation.navigate('Login')}
               style={{paddingRight: 10}}
             />
           ),

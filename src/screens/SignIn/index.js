@@ -10,10 +10,29 @@ import {ScrollView, View} from 'react-native';
 import Label from '../../components/Label';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import {cadastrarAcademia} from '../../services/academia';
+import {BASE_API} from '../../services/api';
+import {storeData} from '../../services/store';
+import {useAuth} from '../../context/auth';
 
 export default function SignIn({navigation}) {
   const [isLoading, setLoading] = useState(false);
+  const {setAuth} = useAuth();
+
+  async function cadastrarAcademia(dataValues) {
+    try {
+      const {data} = await BASE_API.post('/academia/', dataValues);
+
+      await storeData('@user', data);
+      setAuth(data);
+      navigation.navigate('HomeDrawer');
+    } catch ({response}) {
+      console.log(response.data);
+      if (response) {
+        return response.data;
+      }
+      return {};
+    }
+  }
 
   const validate = Yup.object({
     nome: Yup.string().required('Este campo é obrigatório'),
@@ -27,8 +46,8 @@ export default function SignIn({navigation}) {
   });
 
   return (
-    <ScrollView>
-      <Container>
+    <Container>
+      <ScrollView>
         <Header>
           <Label text="Bem vindo ao app!" />
           <Label text="Cadastre seus dados abaixo e aproveite!" />
@@ -37,13 +56,10 @@ export default function SignIn({navigation}) {
           validationSchema={validate}
           onSubmit={async (values, form) => {
             setLoading(true);
-            const res = await cadastrarAcademia(values);
-            if (res === 'OK') {
-              setLoading(false);
-              navigation.navigate('HomeDrawer');
-            } else if (Object.keys(res).length > 0) {
-              Object.keys(res).forEach(keyError => {
-                form.setFieldError(keyError, res[keyError]);
+            const error = await cadastrarAcademia(values);
+            if (Object.keys(error).length > 0) {
+              Object.keys(error).forEach(keyError => {
+                form.setFieldError(keyError, error[keyError]);
               });
             }
             setLoading(false);
@@ -105,7 +121,7 @@ export default function SignIn({navigation}) {
             </View>
           )}
         </Formik>
-      </Container>
-    </ScrollView>
+      </ScrollView>
+    </Container>
   );
 }
