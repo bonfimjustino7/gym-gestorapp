@@ -15,7 +15,7 @@ import FeedSVG from '../../assets/feed.svg';
 import TreinoSVG from '../../assets/treino.svg';
 import PerfilSVG from '../../assets/perfil.svg';
 import QRCodeSVG from '../../assets/qrcode.svg';
-import {PieChart} from 'react-native-svg-charts';
+import Chart from '../../components/Chart';
 
 export default function Home({navigation}) {
   const {auth} = useAuth();
@@ -54,14 +54,18 @@ export default function Home({navigation}) {
     getAlunos();
   }, [auth]);
 
-  const pieData = Object.keys(alunos).map((key, index) => ({
-    value: alunos[key],
-    svg: {
-      fill: key === 'alunosAtivos' ? '#69BB4C' : '#B14046',
-      onPress: () => console.log('press', index),
+  const dataChart = [
+    {
+      label: 'Ativos',
+      value: alunos.alunosAtivos,
+      color: '#69BB4C',
     },
-    key: `pie-${index}`,
-  }));
+    {
+      label: 'Inativos',
+      value: alunos.alunosInativos,
+      color: '#B14046',
+    },
+  ];
 
   return (
     <Container>
@@ -74,30 +78,7 @@ export default function Home({navigation}) {
             alignItems: 'center',
             marginBottom: 20,
           }}>
-          <Text
-            style={{
-              width: '80%',
-              color: '#fff',
-              fontSize: 18,
-              fontWeight: 'bold',
-            }}>
-            Alunos
-          </Text>
-          <Card
-            width={'80%'}
-            height={'180%'}
-            style={{
-              top: 20,
-              position: 'absolute',
-            }}>
-            <PieChart
-              animate
-              outerRadius={40}
-              innerRadius={30}
-              style={{height: 200, width: 200}}
-              data={pieData}
-            />
-          </Card>
+          <Chart data={dataChart} label="Alunos" />
         </LinearGradient>
         <ContainerCard>
           <Card
