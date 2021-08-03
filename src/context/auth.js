@@ -1,5 +1,5 @@
 import React, {useContext, createContext, useState} from 'react';
-import {removeData} from '../services/store';
+import {removeData, storeData} from '../services/store';
 
 const AuthContext = createContext({});
 
@@ -15,8 +15,13 @@ export default function AuthProvider({children}) {
     setAuthState({token: null, email: null, nome: null});
   }
 
+  async function login(data) {
+    await storeData('@user', data);
+    setAuthState(data);
+  }
+
   return (
-    <AuthContext.Provider value={{authState, setAuthState, logout}}>
+    <AuthContext.Provider value={{authState, logout, login}}>
       {children}
     </AuthContext.Provider>
   );
@@ -27,7 +32,7 @@ export function useAuth() {
 
   return {
     auth: context.authState,
-    setAuth: context.setAuthState,
     logout: context.logout,
+    login: context.login,
   };
 }

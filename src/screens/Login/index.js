@@ -13,11 +13,10 @@ import {Formik} from 'formik';
 import Toast from 'react-native-toast-message';
 import {BASE_API} from '../../services/api';
 import {useAuth} from '../../context/auth';
-import {storeData} from '../../services/store';
 
 export default function Login({navigation}) {
   const [buttonLogin, setLoading] = useState(false);
-  const {setAuth} = useAuth();
+  const {login} = useAuth();
 
   async function loginHandler(dataValues) {
     try {
@@ -25,10 +24,7 @@ export default function Login({navigation}) {
       const {data} = responseData;
 
       if (data.is_academia) {
-        setAuth(data);
-        storeData('@user', data);
-
-        navigation.navigate('HomeDrawer');
+        login(data);
       } else {
         console.log(data);
         return 'ERROR_CONTA';

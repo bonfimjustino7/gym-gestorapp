@@ -17,15 +17,14 @@ import Toast from 'react-native-toast-message';
 
 export default function SignIn({navigation}) {
   const [isLoading, setLoading] = useState(false);
-  const {setAuth} = useAuth();
+  const {login} = useAuth();
 
   async function cadastrarAcademia(dataValues) {
     try {
       const {data} = await BASE_API.post('/academia/', dataValues);
 
       await storeData('@user', data);
-      setAuth(data);
-      navigation.navigate('HomeDrawer');
+      login(data);
     } catch ({response}) {
       console.log(response?.data);
       if (response) {
@@ -49,7 +48,7 @@ export default function SignIn({navigation}) {
     password: Yup.string().required('Este campo é obrigatório'),
     endereco: Yup.string().required('Este campo é obrigatório'),
     telefone: Yup.string().required('Este campo é obrigatório').max(19).min(18),
-    cnpj: Yup.string().required('Este campo é obrigatório').max(15).min(14),
+    cnpj: Yup.string().required('Este campo é obrigatório').max(19).min(18),
   });
 
   return (
@@ -93,7 +92,7 @@ export default function SignIn({navigation}) {
                 error={touched.cnpj && errors.cnpj}
                 label="CNPJ"
                 typeMask="cnpj"
-                // size={18}
+                size={18}
                 onChange={handleChange('cnpj')}
               />
               <Input

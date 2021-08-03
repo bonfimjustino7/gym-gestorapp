@@ -11,8 +11,7 @@ import SplashScreen from './screens/Splash';
 const Stack = createStackNavigator();
 
 export default function RootStack() {
-  const {setAuth} = useAuth();
-  const [user, setUser] = useState(null);
+  const {login, auth} = useAuth();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,8 +19,7 @@ export default function RootStack() {
       const userData = await getData('@user');
       console.log(userData);
       if (userData !== null) {
-        setUser(userData);
-        setAuth(userData);
+        login(userData);
       }
       setTimeout(() => {
         setLoading(false);
@@ -37,33 +35,37 @@ export default function RootStack() {
 
   return (
     <Stack.Navigator
-      initialRouteName={user !== null ? 'HomeDrawer' : 'Login'}
       screenOptions={{
         headerStyle: {backgroundColor: '#257AC9'},
         headerTintColor: '#fff',
         headerTitleAlign: 'center',
       }}>
-      <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="SignIn"
-        component={SignIn}
-        options={{
-          title: 'Cadastro',
-        }}
-      />
-      <Stack.Screen
-        name="HomeDrawer"
-        component={RouterDrawer}
-        options={{
-          headerShown: false,
-        }}
-      />
+      {auth?.token === null ? (
+        <>
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="SignIn"
+            component={SignIn}
+            options={{
+              title: 'Cadastro',
+            }}
+          />
+        </>
+      ) : (
+        <Stack.Screen
+          name="HomeDrawer"
+          component={RouterDrawer}
+          options={{
+            headerShown: false,
+          }}
+        />
+      )}
     </Stack.Navigator>
   );
 }
