@@ -1,4 +1,5 @@
 import React, {useContext, createContext, useState} from 'react';
+import {removeData} from '../services/store';
 
 const AuthContext = createContext({});
 
@@ -9,8 +10,13 @@ export default function AuthProvider({children}) {
     nome: null,
   });
 
+  async function logout() {
+    await removeData('@user');
+    setAuthState({token: null, email: null, nome: null});
+  }
+
   return (
-    <AuthContext.Provider value={{authState, setAuthState}}>
+    <AuthContext.Provider value={{authState, setAuthState, logout}}>
       {children}
     </AuthContext.Provider>
   );
@@ -22,5 +28,6 @@ export function useAuth() {
   return {
     auth: context.authState,
     setAuth: context.setAuthState,
+    logout: context.logout,
   };
 }

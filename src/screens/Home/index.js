@@ -53,7 +53,7 @@ export default function Home({navigation}) {
     }
 
     getAlunos();
-  }, [auth]);
+  }, []);
 
   const dataChart = [
     {

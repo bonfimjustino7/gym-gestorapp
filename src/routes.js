@@ -10,7 +10,7 @@ import SplashScreen from './screens/Splash';
 
 const Stack = createStackNavigator();
 
-export default function RootStack({navigation}) {
+export default function RootStack() {
   const {setAuth} = useAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,27 +34,6 @@ export default function RootStack({navigation}) {
   if (loading) {
     return <SplashScreen />;
   }
-
-  // if (user !== null) {
-  //   return (
-  //     <Stack.Navigator>
-  //       <Stack.Screen
-  //         name="HomeDrawer"
-  //         component={RouterDrawer}
-  //         options={{
-  //           headerShown: false,
-  //         }}
-  //       />
-  //       <Stack.Screen
-  //         name="Login"
-  //         component={Login}
-  //         options={{
-  //           headerShown: false,
-  //         }}
-  //       />
-  //     </Stack.Navigator>
-  //   );
-  // }
 
   return (
     <Stack.Navigator
