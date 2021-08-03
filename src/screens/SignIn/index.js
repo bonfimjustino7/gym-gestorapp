@@ -13,6 +13,7 @@ import Button from '../../components/Button';
 import {BASE_API} from '../../services/api';
 import {storeData} from '../../services/store';
 import {useAuth} from '../../context/auth';
+import Toast from 'react-native-toast-message';
 
 export default function SignIn({navigation}) {
   const [isLoading, setLoading] = useState(false);
@@ -26,11 +27,17 @@ export default function SignIn({navigation}) {
       setAuth(data);
       navigation.navigate('HomeDrawer');
     } catch ({response}) {
-      console.log(response.data);
+      console.log(response?.data);
       if (response) {
         return response.data;
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao criar academia',
+          position: 'bottom',
+        });
+        return null;
       }
-      return {};
     }
   }
 
@@ -41,8 +48,8 @@ export default function SignIn({navigation}) {
       .required('Este campo é obrigatório'),
     password: Yup.string().required('Este campo é obrigatório'),
     endereco: Yup.string().required('Este campo é obrigatório'),
-    telefone: Yup.string().required('Este campo é obrigatório').max(11),
-    cnpj: Yup.string().required('Este campo é obrigatório').max(14),
+    telefone: Yup.string().required('Este campo é obrigatório').max(19).min(18),
+    cnpj: Yup.string().required('Este campo é obrigatório').max(15).min(14),
   });
 
   return (
@@ -57,7 +64,7 @@ export default function SignIn({navigation}) {
           onSubmit={async (values, form) => {
             setLoading(true);
             const error = await cadastrarAcademia(values);
-            if (Object.keys(error).length > 0) {
+            if (error && Object.keys(error).length > 0) {
               Object.keys(error).forEach(keyError => {
                 form.setFieldError(keyError, error[keyError]);
               });
@@ -85,13 +92,17 @@ export default function SignIn({navigation}) {
                 value={values.cnpj}
                 error={touched.cnpj && errors.cnpj}
                 label="CNPJ"
+                typeMask="cnpj"
+                // size={18}
                 onChange={handleChange('cnpj')}
               />
               <Input
                 keyboardType="numeric"
                 value={values.telefone}
                 error={touched.telefone && errors.telefone}
+                typeMask="phone"
                 label="Telefone"
+                size={18}
                 onChange={handleChange('telefone')}
               />
               <Input

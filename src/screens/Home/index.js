@@ -48,6 +48,7 @@ export default function Home({navigation}) {
           type: 'error',
           position: 'bottom',
         });
+        navigation.navigate('Login');
       }
     }
 
