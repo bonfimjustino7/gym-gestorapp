@@ -18,7 +18,7 @@ import QRCodeSVG from '../../assets/qrcode.svg';
 import Chart from '../../components/Chart';
 
 export default function Home({navigation}) {
-  const {auth} = useAuth();
+  const {auth, logout} = useAuth();
 
   const [alunos, setAlunos] = useState({
     alunosAtivos: 0,
@@ -48,7 +48,7 @@ export default function Home({navigation}) {
           type: 'error',
           position: 'bottom',
         });
-        navigation.navigate('Login');
+        logout();
       }
     }
 

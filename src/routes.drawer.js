@@ -11,7 +11,6 @@ import Home from './screens/Home';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Alert, View} from 'react-native';
 import {useAuth} from './context/auth';
-import {useEffect} from 'react';
 
 const InitialStack = createStackNavigator();
 const PerfilStack = createStackNavigator();
@@ -103,15 +102,6 @@ function CustomDrawerContent(props) {
 
 export default function RouterDrawer({navigation}) {
   const Drawer = createDrawerNavigator();
-  const {auth} = useAuth();
-
-  useEffect(() => {
-    console.log(auth);
-    if (!auth?.token) {
-      navigation.navigate('Login');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
 
   return (
     <Drawer.Navigator
