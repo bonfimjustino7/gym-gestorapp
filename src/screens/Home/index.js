@@ -2,7 +2,7 @@ import React from 'react';
 import {useEffect} from 'react';
 import {useState} from 'react';
 
-import {ScrollView, Text, View} from 'react-native';
+import {RefreshControl, ScrollView, Text, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useAuth} from '../../context/auth';
 import {BASE_API} from '../../services/api';
@@ -25,34 +25,39 @@ export default function Home({navigation}) {
     alunosInativos: 0,
   });
 
-  useEffect(() => {
-    async function getAlunos() {
-      try {
-        const resposta = await BASE_API.get(
-          `/academia/${auth?.user_id}/estatisticas/`,
-          {
-            headers: {
-              Authorization: `Token ${auth?.token}`,
-            },
+  const [isLoading, setLoading] = useState(false);
+
+  async function getAlunos() {
+    setLoading(true);
+    try {
+      const resposta = await BASE_API.get(
+        `/academia/${auth?.user_id}/estatisticas/`,
+        {
+          headers: {
+            Authorization: `Token ${auth?.token}`,
           },
-        );
+        },
+      );
 
-        setAlunos({
-          alunosAtivos: resposta.data.alunos_ativos,
-          alunosInativos: resposta.data.alunos_inativos,
-        });
-      } catch (error) {
-        Toast.show({
-          text1: 'Falha na conexão',
-          text2: 'Verifique a conexão com a internet',
-          type: 'error',
-          position: 'bottom',
-        });
-        logout();
-      }
+      setAlunos({
+        alunosAtivos: resposta.data.alunos_ativos,
+        alunosInativos: resposta.data.alunos_inativos,
+      });
+      setLoading(false);
+    } catch (error) {
+      Toast.show({
+        text1: 'Falha na conexão',
+        text2: 'Verifique a conexão com a internet',
+        type: 'error',
+        position: 'bottom',
+      });
+      setLoading(false);
+      logout();
     }
-
+  }
+  useEffect(() => {
     getAlunos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dataChart = [
@@ -70,7 +75,15 @@ export default function Home({navigation}) {
 
   return (
     <Container>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={() => {
+              getAlunos();
+            }}
+          />
+        }>
         <LinearGradient
           colors={['#257AC9', '#222426']}
           style={{
