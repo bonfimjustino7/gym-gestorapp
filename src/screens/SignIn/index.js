@@ -11,7 +11,6 @@ import Label from '../../components/Label';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import {BASE_API} from '../../services/api';
-import {storeData} from '../../services/store';
 import {useAuth} from '../../context/auth';
 import Toast from 'react-native-toast-message';
 
@@ -22,8 +21,6 @@ export default function SignIn({navigation}) {
   async function cadastrarAcademia(dataValues) {
     try {
       const {data} = await BASE_API.post('/academia/', dataValues);
-
-      await storeData('@user', data);
       login(data);
     } catch ({response}) {
       console.log(response?.data);
