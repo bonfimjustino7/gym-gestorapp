@@ -91,7 +91,6 @@ function CustomDrawerContent(props) {
         <DrawerItem
           label="Sair"
           onPress={() => {
-            Alert.alert('Sair', 'Sessão encerrada');
             logout();
           }}
         />
