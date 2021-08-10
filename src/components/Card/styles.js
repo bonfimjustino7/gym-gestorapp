@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 export const CardView = styled.TouchableHighlight`
-  width: ${props => props.width};
+  width: ${props => (props.width ? props.width : '100%')};
   height: ${props => props.height};
   background-color: #2a2b2c;
   margin-top: 15px;

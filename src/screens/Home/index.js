@@ -1,6 +1,7 @@
 import React from 'react';
 import {useEffect} from 'react';
 import {useState} from 'react';
+import {useFocusEffect} from '@react-navigation/core';
 
 import {RefreshControl, ScrollView, Text, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -16,6 +17,7 @@ import TreinoSVG from '../../assets/treino.svg';
 import PerfilSVG from '../../assets/perfil.svg';
 import QRCodeSVG from '../../assets/qrcode.svg';
 import Chart from '../../components/Chart';
+import {useCallback} from 'react';
 
 export default function Home({navigation}) {
   const {auth, logout} = useAuth();
@@ -55,10 +57,12 @@ export default function Home({navigation}) {
       logout();
     }
   }
-  useEffect(() => {
-    getAlunos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getAlunos();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [navigation]),
+  );
 
   const dataChart = [
     {
@@ -100,7 +104,7 @@ export default function Home({navigation}) {
             height={'130px'}
             elevation={6}
             label="Aluno"
-            onPress={() => console.log('Aluno')}>
+            onPress={() => navigation.navigate('AlunoList')}>
             <AlunosSVG />
           </Card>
           <Card

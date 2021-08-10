@@ -8,14 +8,22 @@ import {
 import {createStackNavigator} from '@react-navigation/stack';
 import Perfil from './screens/Perfil';
 import Home from './screens/Home';
-import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Alert, View} from 'react-native';
 import {useAuth} from './context/auth';
+
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import Icon from './components/Icon';
+import AlunoLists from './screens/Aluno/AlunoLists';
 
 const InitialStack = createStackNavigator();
 const PerfilStack = createStackNavigator();
 
-function InitialStackScreen() {
+function InitialStackScreen({navigation, route}) {
+  function isScreenPrimary(routes) {
+    const screenName = getFocusedRouteNameFromRoute(route) ?? 'Home';
+    return screenName === 'Home';
+  }
+
   return (
     <InitialStack.Navigator
       screenOptions={({navigation}) => {
@@ -27,27 +35,35 @@ function InitialStackScreen() {
           },
           headerTintColor: '#fff',
           headerTitleAlign: 'center',
-          headerLeft: () => (
-            <MaterialIcons
-              name="menu"
-              size={30}
-              color="#fff"
-              onPress={() => navigation.openDrawer()}
-              style={{paddingLeft: 10}}
-            />
-          ),
-          headerRight: () => (
-            <MaterialIcons
-              name="help-circle-outline"
-              size={30}
-              color="#fff"
-              onPress={() => Alert.alert('Ajuda', 'Em desenvolvimento...')}
-              style={{paddingRight: 10}}
-            />
-          ),
+          headerLeft: ({onPress}) =>
+            isScreenPrimary() ? (
+              <Icon
+                name="menu"
+                onPress={() => navigation.openDrawer()}
+                style={{paddingLeft: 10}}
+              />
+            ) : (
+              <Icon
+                name="keyboard-backspace"
+                onPress={onPress}
+                style={{paddingLeft: 10}}
+              />
+            ),
+          headerRight: () =>
+            isScreenPrimary() && (
+              <Icon
+                name="help-circle-outline"
+                onPress={() => Alert.alert('Ajuda', 'Em desenvolvimento...')}
+              />
+            ),
         };
       }}>
       <InitialStack.Screen name="Home" component={Home} />
+      <InitialStack.Screen
+        name="AlunoList"
+        component={AlunoLists}
+        options={{title: 'Alunos'}}
+      />
     </InitialStack.Navigator>
   );
 }
@@ -61,12 +77,10 @@ function PerfilStackScreen() {
           headerTintColor: '#fff',
           headerTitleAlign: 'center',
           headerLeft: () => (
-            <MaterialIcons
+            <Icon
               name="menu"
               size={30}
-              color="#fff"
               onPress={() => navigation.openDrawer()}
-              style={{paddingLeft: 10}}
             />
           ),
         };
