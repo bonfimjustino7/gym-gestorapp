@@ -14,6 +14,7 @@ import {useAuth} from './context/auth';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Icon from './components/Icon';
 import AlunoLists from './screens/Aluno/AlunoLists';
+import AlunoForm from './screens/Aluno/AlunoForm';
 
 const InitialStack = createStackNavigator();
 const PerfilStack = createStackNavigator();
@@ -63,6 +64,11 @@ function InitialStackScreen({navigation, route}) {
         name="AlunoList"
         component={AlunoLists}
         options={{title: 'Alunos'}}
+      />
+      <InitialStack.Screen
+        name="AlunoForm"
+        component={AlunoForm}
+        options={{title: 'Cadastro de Alunos'}}
       />
     </InitialStack.Navigator>
   );

@@ -19,6 +19,9 @@ import Toast from 'react-native-toast-message';
 import {useEffect} from 'react';
 import Collapsible from 'react-native-collapsible';
 import {TouchableHighlight} from 'react-native-gesture-handler';
+import FloatingButton from '../../../components/FloatingButton';
+import {useFocusEffect} from '@react-navigation/native';
+import {useCallback} from 'react';
 
 export default function AlunoLists({navigation}) {
   const {auth, logout} = useAuth();
@@ -69,8 +72,16 @@ export default function AlunoLists({navigation}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, status]);
 
+  useFocusEffect(
+    useCallback(() => {
+      getMatriculas();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [navigation]),
+  );
+
   return (
     <Container>
+      <FloatingButton onPress={() => navigation.navigate('AlunoForm')} />
       <View
         style={{
           flexDirection: 'row',

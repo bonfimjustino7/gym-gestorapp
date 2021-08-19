@@ -14,6 +14,7 @@ export default function Input({
   keyboardType,
   typeMask,
   size,
+  style,
 }) {
   function handlerMask(valueMask) {
     let valueMasked;
@@ -30,7 +31,7 @@ export default function Input({
   }
 
   return (
-    <View style={{marginBottom: 10}}>
+    <View style={{marginBottom: 10, ...style}}>
       <Text style={{color: '#fff', fontSize: 16}}>{label}</Text>
       <TextInputStyled
         maxLength={size}
