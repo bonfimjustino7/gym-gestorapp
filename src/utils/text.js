@@ -4,7 +4,7 @@ export const textTruncate = (text: String, maxLenght) => {
     : text || '';
 };
 
-export const sigle = (text: String) => {
+export const initials = (text: String) => {
   const palavras = text?.split(' ') || [];
 
   if (!palavras.length) {

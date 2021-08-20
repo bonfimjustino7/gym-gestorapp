@@ -19,7 +19,7 @@ import AlunoDetail from './screens/Aluno/AlunoDetail';
 import PerfilIcon from '../src/assets/perfil.svg';
 import HomeIcon from '../src/assets/home_icon.svg';
 import LogoutIcon from '../src/assets/logout.svg';
-import {sigle, textTruncate} from './utils/text';
+import {initials, textTruncate} from './utils/text';
 
 const InitialStack = createStackNavigator();
 const PerfilStack = createStackNavigator();
@@ -139,7 +139,7 @@ function CustomDrawerContent(props) {
                 zIndex: 1000,
               }}>
               <Text style={{fontSize: 30, fontWeight: 'bold', color: '#fff'}}>
-                {sigle(auth?.nome)}
+                {initials(auth?.nome)}
               </Text>
             </View>
             <View
