@@ -137,7 +137,15 @@ export default function AlunoLists({navigation}) {
           keyExtractor={item => item.id.toString()}
           renderItem={({item, index}) => {
             return (
-              <Card height={'100px'} onPress={() => console.log(item.aluno.id)}>
+              <Card
+                height={'100px'}
+                onPress={() =>
+                  navigation.navigate('AlunoDetail', {
+                    id: item.aluno.id,
+                    nome: item.aluno.nome,
+                    status: item.status,
+                  })
+                }>
                 <View
                   style={{
                     flex: 1,

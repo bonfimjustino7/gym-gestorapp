@@ -8,13 +8,18 @@ import {
 import {createStackNavigator} from '@react-navigation/stack';
 import Perfil from './screens/Perfil';
 import Home from './screens/Home';
-import {Alert, View} from 'react-native';
+import {Alert, ImageBackground, Text, View} from 'react-native';
 import {useAuth} from './context/auth';
 
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Icon from './components/Icon';
 import AlunoLists from './screens/Aluno/AlunoLists';
 import AlunoForm from './screens/Aluno/AlunoForm';
+import AlunoDetail from './screens/Aluno/AlunoDetail';
+import PerfilIcon from '../src/assets/perfil.svg';
+import HomeIcon from '../src/assets/home_icon.svg';
+import LogoutIcon from '../src/assets/logout.svg';
+import {sigle, textTruncate} from './utils/text';
 
 const InitialStack = createStackNavigator();
 const PerfilStack = createStackNavigator();
@@ -70,6 +75,15 @@ function InitialStackScreen({navigation, route}) {
         component={AlunoForm}
         options={{title: 'Cadastro de Alunos'}}
       />
+      <InitialStack.Screen
+        name="AlunoDetail"
+        component={AlunoDetail}
+        options={{
+          title: 'Informações do Aluno',
+          headerTransparent: true,
+          headerTitleAlign: 'left',
+        }}
+      />
     </InitialStack.Navigator>
   );
 }
@@ -97,18 +111,74 @@ function PerfilStackScreen() {
 }
 
 function CustomDrawerContent(props) {
-  const {logout} = useAuth();
+  const {logout, auth} = useAuth();
   return (
     <DrawerContentScrollView
       contentContainerStyle={{
         flex: 1,
-        justifyContent: 'space-between',
+        backgroundColor: '#222426',
       }}>
       <View>
-        <DrawerItemList {...props} />
-      </View>
-      <View>
+        <View style={{width: 200, height: 200}}>
+          <ImageBackground
+            style={{width: 300, height: 200, justifyContent: 'flex-end'}}
+            source={require('../src/assets/folder.png')}>
+            <View
+              style={{
+                position: 'absolute',
+                top: 50,
+                left: 20,
+                width: 100,
+                height: 100,
+                backgroundColor: '#257AC9',
+                borderRadius: 100,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderColor: '#14497D',
+                borderWidth: 5,
+                zIndex: 1000,
+              }}>
+              <Text style={{fontSize: 30, fontWeight: 'bold', color: '#fff'}}>
+                {sigle(auth?.nome)}
+              </Text>
+            </View>
+            <View
+              style={{
+                backgroundColor: 'rgba(42, 43, 44, 0.5)',
+                height: 100,
+                alignItems: 'flex-end',
+              }}>
+              <View style={{width: 180, padding: 10}}>
+                <Text
+                  style={{
+                    fontSize: 21,
+                    fontWeight: 'bold',
+                    color: '#fff',
+                    lineHeight: 35,
+                  }}>
+                  Bem vindo!
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                    color: '#fff',
+                  }}>
+                  {textTruncate(auth?.nome, 34)}
+                </Text>
+              </View>
+            </View>
+          </ImageBackground>
+        </View>
+        <DrawerItemList
+          activeTintColor="#fff"
+          inactiveTintColor="#fff"
+          {...props}
+        />
         <DrawerItem
+          icon={() => <LogoutIcon width={28} height={28} style={{top: 4}} />}
+          activeTintColor="#fff"
+          inactiveTintColor="#fff"
           label="Sair"
           onPress={() => {
             logout();
@@ -125,8 +195,20 @@ export default function RouterDrawer({navigation}) {
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="Inicial" component={InitialStackScreen} />
-      <Drawer.Screen name="Perfil" component={PerfilStackScreen} />
+      <Drawer.Screen
+        name="Inicial"
+        component={InitialStackScreen}
+        options={{
+          drawerIcon: () => <HomeIcon width={28} height={28} />,
+        }}
+      />
+      <Drawer.Screen
+        name="Perfil"
+        component={PerfilStackScreen}
+        options={{
+          drawerIcon: () => <PerfilIcon width={28} height={28} />,
+        }}
+      />
     </Drawer.Navigator>
   );
 }
