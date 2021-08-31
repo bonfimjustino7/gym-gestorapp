@@ -189,13 +189,16 @@ export default function FormMedicoes({
           </View>
 
           <View style={{flexDirection: 'row'}}>
-            <Button
-              style={{marginVertical: 20, flex: 1}}
-              label="Voltar"
-              transparent
-              onPress={onPressBack}
-              marginRight={10}
-            />
+            {onPressBack && (
+              <Button
+                style={{marginVertical: 20, flex: 1}}
+                label="Voltar"
+                transparent
+                onPress={onPressBack}
+                marginRight={10}
+              />
+            )}
+
             <Button
               style={{marginVertical: 20}}
               label={labelButton || 'Enviar'}

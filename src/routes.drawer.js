@@ -20,6 +20,7 @@ import PerfilIcon from '../src/assets/perfil.svg';
 import HomeIcon from '../src/assets/home_icon.svg';
 import LogoutIcon from '../src/assets/logout.svg';
 import {initials, textTruncate} from './utils/text';
+import MedicoesForm from './screens/Aluno/Medicoes';
 
 const InitialStack = createStackNavigator();
 const PerfilStack = createStackNavigator();
@@ -74,6 +75,11 @@ function InitialStackScreen({navigation, route}) {
         name="AlunoForm"
         component={AlunoForm}
         options={{title: 'Cadastro de Alunos'}}
+      />
+      <InitialStack.Screen
+        name="MedicoesForm"
+        component={MedicoesForm}
+        options={{title: 'Cadastro de Medições'}}
       />
       <InitialStack.Screen
         name="AlunoDetail"

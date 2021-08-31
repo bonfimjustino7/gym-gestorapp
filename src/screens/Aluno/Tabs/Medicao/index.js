@@ -9,14 +9,14 @@ import ModalScreen from '../../../../components/ModalScreen';
 import {getDateFormatter} from '../../../../utils/datetime';
 
 export default function Medicao({route}) {
-  const {medicoesAluno, nomeAluno} = route;
+  const {medicoesAluno, nomeAluno, screenLoading} = route;
   const [showMedicao, setVisibleMedicao] = useState(false);
   const [medicaoSelect, setMedicaoSelect] = useState({});
 
   // console.log(medicoesAluno);
 
   return (
-    <View style={{flex: 1, backgroundColor: 'transparent'}}>
+    <View style={{backgroundColor: 'transparent'}}>
       <ModalScreen
         nomeAluno={nomeAluno}
         data={medicaoSelect}

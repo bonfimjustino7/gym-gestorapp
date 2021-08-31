@@ -7,10 +7,8 @@ import {ScrollView} from 'react-native-gesture-handler';
 export default function Home({route}) {
   const {dadosAluno} = route;
   return (
-    <View style={{flex: 1, backgroundColor: 'transparent'}}>
-      <ScrollView
-        style={{backgroundColor: '#222426'}}
-        contentContainerStyle={{flexGrow: 1}}>
+    <View style={{backgroundColor: 'transparent'}}>
+      <ScrollView>
         <Text
           style={{
             color: '#fff',
@@ -57,6 +55,13 @@ export default function Home({route}) {
               colorLabel="#257AC9"
               value={dadosAluno?.email}
               label="Email"
+              // onChange={handleChange('nome')}
+            />
+            <Input
+              readonly
+              colorLabel="#257AC9"
+              value={dadosAluno?.endereco}
+              label="Endereço"
               // onChange={handleChange('nome')}
             />
             <Input

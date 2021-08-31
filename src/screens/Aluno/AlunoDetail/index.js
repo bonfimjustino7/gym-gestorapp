@@ -6,7 +6,7 @@ import {
   ImageBackground,
   Image,
   StyleSheet,
-  useWindowDimensions,
+  ScrollView,
 } from 'react-native';
 import Card from '../../../components/Card';
 import Topic from '../../../components/Topic';
@@ -17,12 +17,16 @@ import {Animated} from 'react-native';
 import {useRef} from 'react';
 import Loading from '../../../components/Loading';
 import Tabs from '../Tabs';
+import {useCallback} from 'react';
+
+import {useFocusEffect} from '@react-navigation/core';
 
 export default function AlunoDetail({navigation, route}) {
-  const layout = useWindowDimensions();
   const [dadosAluno, setDadosAluno] = useState({});
   const [medicoesAluno, setMedicoesAluno] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMedicoes, setLoadingMedicoes] = useState(false);
+
   const yOffset = useRef(new Animated.Value(0)).current;
   const headerOpacity = yOffset.interpolate({
     inputRange: [0, 100],
@@ -30,6 +34,31 @@ export default function AlunoDetail({navigation, route}) {
     extrapolate: 'clamp',
   });
   const {auth, logout} = useAuth();
+
+  async function getMedicoes() {
+    setLoadingMedicoes(true);
+
+    try {
+      const respostaMedicao = await BASE_API.get(
+        `/aluno/${route.params.id}/medicoes/`,
+        {
+          headers: {
+            Authorization: `Token ${auth?.token}`,
+          },
+        },
+      );
+      setLoadingMedicoes(false);
+      setMedicoesAluno(respostaMedicao.data?.results);
+    } catch (error) {
+      Toast.show({
+        text1: 'Falha na conexão',
+        text2: 'Verifique a conexão com a internet',
+        type: 'error',
+        position: 'bottom',
+      });
+      setLoadingMedicoes(false);
+    }
+  }
 
   async function getDadosAluno() {
     setLoading(true);
@@ -41,17 +70,7 @@ export default function AlunoDetail({navigation, route}) {
       });
 
       setDadosAluno(resposta.data);
-
-      const respostaMedicao = await BASE_API.get(
-        `/aluno/${route.params.id}/medicoes/`,
-        {
-          headers: {
-            Authorization: `Token ${auth?.token}`,
-          },
-        },
-      );
-
-      setMedicoesAluno(respostaMedicao.data?.results);
+      await getMedicoes();
       setLoading(false);
     } catch (error) {
       Toast.show({
@@ -65,11 +84,13 @@ export default function AlunoDetail({navigation, route}) {
     }
   }
 
-  useEffect(() => {
-    getDadosAluno();
+  useFocusEffect(
+    useCallback(() => {
+      getDadosAluno();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [navigation]),
+  );
 
   useEffect(() => {
     navigation.setOptions({
@@ -90,21 +111,7 @@ export default function AlunoDetail({navigation, route}) {
 
   return (
     <View style={{flex: 1, backgroundColor: '#222426'}}>
-      <Animated.ScrollView
-        contentContainerStyle={{height: layout.height + 150}}
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: {
-                  y: yOffset,
-                },
-              },
-            },
-          ],
-          {useNativeDriver: true},
-        )}
-        scrollEventThrottle={16}>
+      <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <ImageBackground
           style={{height: 200, justifyContent: 'flex-end'}}
           source={require('../../../assets/header_aluno.jpg')}>
@@ -152,18 +159,18 @@ export default function AlunoDetail({navigation, route}) {
             </Text>
           </View>
         </View>
-        <View style={{paddingHorizontal: 15, flex: 1}}>
-          {loading ? (
-            <Loading />
-          ) : (
-            <Tabs
-              dadosAluno={dadosAluno}
-              medicoesAluno={medicoesAluno}
-              nomeAluno={route?.params.nome}
-            />
-          )}
-        </View>
-      </Animated.ScrollView>
+        {loading ? (
+          <Loading />
+        ) : (
+          <Tabs
+            screenLoading={{medicao: loadingMedicoes}}
+            navigation={navigation}
+            dadosAluno={dadosAluno}
+            medicoesAluno={medicoesAluno}
+            nomeAluno={route?.params.nome}
+          />
+        )}
+      </ScrollView>
     </View>
   );
 }

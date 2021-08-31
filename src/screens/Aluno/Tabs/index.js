@@ -3,9 +3,17 @@ import {TabBar, SceneMap, TabView} from 'react-native-tab-view';
 import Home from './Home';
 import Medicao from './Medicao';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FloatingButton from '../../../components/FloatingButton';
 
-export default function Tabs({dadosAluno, medicoesAluno, nomeAluno}) {
+export default function Tabs({
+  screenLoading,
+  dadosAluno,
+  medicoesAluno,
+  nomeAluno,
+  navigation,
+}) {
   const [index, setIndex] = useState(0);
+
   const [routes] = useState([
     {key: 'home', icon: 'account', dadosAluno: dadosAluno},
     {
@@ -13,6 +21,7 @@ export default function Tabs({dadosAluno, medicoesAluno, nomeAluno}) {
       icon: 'arm-flex',
       medicoesAluno: medicoesAluno,
       nomeAluno: nomeAluno,
+      screenLoading: screenLoading?.medicao,
     },
   ]);
 
@@ -44,11 +53,23 @@ export default function Tabs({dadosAluno, medicoesAluno, nomeAluno}) {
   }
 
   return (
-    <TabView
-      navigationState={{index, routes}}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      renderTabBar={renderTab}
-    />
+    <>
+      <TabView
+        style={{paddingHorizontal: 15}}
+        navigationState={{index, routes}}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        renderTabBar={renderTab}
+      />
+      {index > 0 && (
+        <FloatingButton
+          onPress={() =>
+            navigation.navigate('MedicoesForm', {
+              aluno_id: dadosAluno?.id,
+            })
+          }
+        />
+      )}
+    </>
   );
 }
