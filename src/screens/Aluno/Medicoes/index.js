@@ -23,7 +23,11 @@ export default function MedicoesForm({navigation, route}) {
           },
         },
       );
-      navigation.goBack(null);
+      if (route?.params.redirect) {
+        navigation.navigate(route?.params.redirect);
+      } else {
+        navigation.goBack(null);
+      }
     } catch ({response}) {
       console.log(response?.data);
       setLoading(false);

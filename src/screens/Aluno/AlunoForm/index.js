@@ -16,25 +16,31 @@ import {BASE_API} from '../../../services/api';
 import FormAluno from './formAluno';
 import {useRef} from 'react';
 import FormMedicoes from './formMedicoes';
+import Loading from '../../../components/Loading';
+import {useEffect} from 'react';
 
 export default function AlunoForm({navigation}) {
   const [isLoading, setLoading] = useState(false);
-  const [dataAluno, setDataAluno] = useState(null);
-  const [formActive, setFormActive] = useState(null);
+  const [idAluno, setIdAluno] = useState(null);
 
   const {auth} = useAuth();
 
-  async function cadastrarAluno() {
+  async function cadastrarAluno(values) {
+    setLoading(true);
     try {
       const {data} = await BASE_API.post('/aluno/', {
-        ...dataAluno,
+        ...values,
         academia: auth.user_id,
       });
-      return {user_id: data.user_id};
+
+      setIdAluno(data.user_id);
+      setLoading(false);
+
+      return null;
     } catch ({response}) {
-      console.log(response?.data);
+      setLoading(false);
+
       if (response && Object.keys(response?.data).length > 0) {
-        setFormActive('aluno');
         return response.data;
       } else {
         Toast.show({
@@ -48,52 +54,12 @@ export default function AlunoForm({navigation}) {
     }
   }
 
-  async function cadastrarMedicoes(alunoId, valuesMedicoes) {
-    try {
-      await BASE_API.post(
-        `/aluno/${alunoId}/medicoes/`,
-        {aluno: alunoId, ...valuesMedicoes},
-        {
-          headers: {
-            Authorization: `Token ${auth?.token}`,
-          },
-        },
-      );
-    } catch ({response}) {
-      console.log(response?.data);
-      if (response) {
-        return response.data;
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Erro ao criar aluno',
-          position: 'bottom',
-        });
-        return null;
-      }
-    }
-  }
-
-  async function cadastrar(valuesMedicoes) {
-    const data = await cadastrarAluno();
-
-    if (data?.user_id) {
-      await cadastrarMedicoes(data.user_id, valuesMedicoes);
-      navigation.goBack();
-    } else {
-      let erros = '';
-      Object.keys(data).forEach(key => {
-        erros += data[key]?.toString() + '\n';
-      });
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: erros,
-        position: 'bottom',
-        visibilityTime: 10000,
-      });
-    }
-  }
+  useEffect(() => {
+    navigation.navigate('MedicoesForm', {
+      aluno_id: idAluno,
+      redirect: 'AlunoList',
+    });
+  }, [idAluno]);
 
   return (
     <Container>
@@ -102,24 +68,27 @@ export default function AlunoForm({navigation}) {
           <Label text="Bem vindo ao app!" />
           <Label text="Cadastre os dados do aluno abaixo e aproveite!" />
         </Header>
-        {formActive === 'aluno' || !formActive ? (
-          <FormAluno
-            initial={{...dataAluno}}
-            labelButton="Proximo"
-            onSubmit={values => {
-              setDataAluno(values);
-              console.log(values);
-              setFormActive('medicoes');
-            }}
-          />
-        ) : (
-          <FormMedicoes
-            onPressBack={() => setFormActive('aluno')}
-            onSubmit={values => {
-              cadastrar(values);
-            }}
-          />
-        )}
+        {isLoading && <Loading transparent />}
+        <FormAluno
+          labelButton="Salvar"
+          onSubmit={async (values, form) => {
+            console.log(values);
+            const error = await cadastrarAluno(values);
+            if (error) {
+              console.log(error);
+              Object.keys(error).forEach(keyError => {
+                form.setFieldError(keyError, error[keyError]);
+              });
+            } else {
+              Toast.show({
+                type: 'success',
+                text1: 'Sucesso',
+                text2: 'Dados salvos com sucesso',
+                position: 'bottom',
+              });
+            }
+          }}
+        />
       </ScrollView>
     </Container>
   );
