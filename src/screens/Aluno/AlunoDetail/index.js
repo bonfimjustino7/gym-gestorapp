@@ -5,22 +5,23 @@ import {
   Text,
   ImageBackground,
   Image,
-  ScrollView,
-  RefreshControl,
   StyleSheet,
+  useWindowDimensions,
 } from 'react-native';
 import Card from '../../../components/Card';
 import Topic from '../../../components/Topic';
-import Input from '../../../components/Input';
 import {useAuth} from '../../../context/auth';
 import Toast from 'react-native-toast-message';
 import {BASE_API} from '../../../services/api';
 import {Animated} from 'react-native';
 import {useRef} from 'react';
 import Loading from '../../../components/Loading';
+import Tabs from '../Tabs';
 
 export default function AlunoDetail({navigation, route}) {
+  const layout = useWindowDimensions();
   const [dadosAluno, setDadosAluno] = useState({});
+  const [medicoesAluno, setMedicoesAluno] = useState([]);
   const [loading, setLoading] = useState(true);
   const yOffset = useRef(new Animated.Value(0)).current;
   const headerOpacity = yOffset.interpolate({
@@ -40,6 +41,17 @@ export default function AlunoDetail({navigation, route}) {
       });
 
       setDadosAluno(resposta.data);
+
+      const respostaMedicao = await BASE_API.get(
+        `/aluno/${route.params.id}/medicoes/`,
+        {
+          headers: {
+            Authorization: `Token ${auth?.token}`,
+          },
+        },
+      );
+
+      setMedicoesAluno(respostaMedicao.data?.results);
       setLoading(false);
     } catch (error) {
       Toast.show({
@@ -55,6 +67,7 @@ export default function AlunoDetail({navigation, route}) {
 
   useEffect(() => {
     getDadosAluno();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -78,6 +91,7 @@ export default function AlunoDetail({navigation, route}) {
   return (
     <View style={{flex: 1, backgroundColor: '#222426'}}>
       <Animated.ScrollView
+        contentContainerStyle={{height: layout.height + 150}}
         onScroll={Animated.event(
           [
             {
@@ -138,67 +152,15 @@ export default function AlunoDetail({navigation, route}) {
             </Text>
           </View>
         </View>
-        <View style={{paddingHorizontal: 15}}>
-          <Text
-            style={{
-              color: '#fff',
-              fontSize: 18,
-              fontWeight: 'bold',
-              paddingTop: 20,
-            }}>
-            Dados pessoais
-          </Text>
+        <View style={{paddingHorizontal: 15, flex: 1}}>
           {loading ? (
             <Loading />
           ) : (
-            <Card
-              style={{
-                justifyContent: 'flex-start',
-                alignItems: 'flex-start',
-                padding: 20,
-              }}>
-              <View
-                style={{
-                  width: '100%',
-                  flexDirection: 'column',
-                }}>
-                <Input
-                  readonly
-                  colorLabel="#257AC9"
-                  value={dadosAluno?.nome}
-                  label="Nome do Aluno"
-                  // onChange={handleChange('nome')}
-                />
-                <Input
-                  readonly
-                  colorLabel="#257AC9"
-                  value={dadosAluno?.cpf}
-                  label="CPF"
-                  // onChange={handleChange('nome')}
-                />
-                <Input
-                  readonly
-                  colorLabel="#257AC9"
-                  value={dadosAluno?.telefone}
-                  label="Telefone"
-                  // onChange={handleChange('nome')}
-                />
-                <Input
-                  readonly
-                  colorLabel="#257AC9"
-                  value={dadosAluno?.email}
-                  label="Email"
-                  // onChange={handleChange('nome')}
-                />
-                <Input
-                  readonly
-                  colorLabel="#257AC9"
-                  value={dadosAluno?.endereco}
-                  label="Endereço"
-                  // onChange={handleChange('nome')}
-                />
-              </View>
-            </Card>
+            <Tabs
+              dadosAluno={dadosAluno}
+              medicoesAluno={medicoesAluno}
+              nomeAluno={route?.params.nome}
+            />
           )}
         </View>
       </Animated.ScrollView>

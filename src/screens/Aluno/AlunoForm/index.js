@@ -50,11 +50,15 @@ export default function AlunoForm({navigation}) {
 
   async function cadastrarMedicoes(alunoId, valuesMedicoes) {
     try {
-      await BASE_API.post(`/aluno/${alunoId}/medicoes/`, valuesMedicoes, {
-        headers: {
-          Authorization: `Token ${auth?.token}`,
+      await BASE_API.post(
+        `/aluno/${alunoId}/medicoes/`,
+        {aluno: alunoId, ...valuesMedicoes},
+        {
+          headers: {
+            Authorization: `Token ${auth?.token}`,
+          },
         },
-      });
+      );
     } catch ({response}) {
       console.log(response?.data);
       if (response) {
