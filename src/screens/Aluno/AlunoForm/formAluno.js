@@ -5,17 +5,34 @@ import * as Yup from 'yup';
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
 
-export default function FormAluno({labelButton, onSubmit, initial}) {
-  const validate = Yup.object({
+export default function FormAluno({
+  labelButton,
+  onSubmit,
+  initial,
+  readonly,
+  editable,
+}) {
+  const fields = {
     nome: Yup.string().required('Este campo é obrigatório'),
     email: Yup.string()
+
       .email('Email inválido')
       .required('Este campo é obrigatório'),
-    password: Yup.string().required('Este campo é obrigatório'),
+
     endereco: Yup.string().required('Este campo é obrigatório'),
-    telefone: Yup.string().required('Este campo é obrigatório').max(20).min(18),
-    cpf: Yup.string().required('Este campo é obrigatório').max(14).min(14),
-  });
+    telefone: Yup.string().nullable().max(20).min(18),
+    cpf: Yup.string().nullable().max(14).min(14),
+  };
+
+  const validate = Yup.object(
+    !editable
+      ? {
+          password: Yup.string().required('Este campo é obrigatório'),
+          ...fields,
+        }
+      : fields,
+  );
+
   return (
     <Formik
       validationSchema={validate}
@@ -42,12 +59,14 @@ export default function FormAluno({labelButton, onSubmit, initial}) {
       {({handleChange, handleSubmit, values, errors, touched}) => (
         <View>
           <Input
+            readonly={readonly}
             value={values.nome}
             error={touched.nome && errors.nome}
             label="Nome do Aluno"
             onChange={handleChange('nome')}
           />
           <Input
+            readonly={readonly}
             keyboardType="numeric"
             value={values.cpf}
             error={touched.cpf && errors.cpf}
@@ -57,6 +76,7 @@ export default function FormAluno({labelButton, onSubmit, initial}) {
             onChange={handleChange('cpf')}
           />
           <Input
+            readonly={readonly}
             keyboardType="numeric"
             value={values.telefone}
             error={touched.telefone && errors.telefone}
@@ -66,29 +86,36 @@ export default function FormAluno({labelButton, onSubmit, initial}) {
             onChange={handleChange('telefone')}
           />
           <Input
+            readonly={readonly}
             value={values.endereco}
             error={touched.endereco && errors.endereco}
             label="Endereço"
             onChange={handleChange('endereco')}
           />
           <Input
+            readonly={readonly}
             error={touched.email && errors.email}
             value={values.email}
             label="Email"
             onChange={handleChange('email')}
           />
-          <Input
-            error={touched.password && errors.password}
-            password
-            label="Senha"
-            onChange={handleChange('password')}
-          />
+          {!editable && (
+            <Input
+              readonly={readonly}
+              error={touched.password && errors.password}
+              password
+              label="Senha"
+              onChange={handleChange('password')}
+            />
+          )}
 
-          <Button
-            style={{marginVertical: 20}}
-            label={labelButton}
-            onPress={handleSubmit}
-          />
+          {!readonly && (
+            <Button
+              style={{marginVertical: 20}}
+              label={labelButton}
+              onPress={handleSubmit}
+            />
+          )}
         </View>
       )}
     </Formik>

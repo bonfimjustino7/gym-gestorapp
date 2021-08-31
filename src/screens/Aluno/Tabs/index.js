@@ -15,7 +15,12 @@ export default function Tabs({
   const [index, setIndex] = useState(0);
 
   const [routes] = useState([
-    {key: 'home', icon: 'account', dadosAluno: dadosAluno},
+    {
+      key: 'home',
+      icon: 'account',
+      dadosAluno: dadosAluno,
+      navigation: navigation,
+    },
     {
       key: 'medicao',
       icon: 'arm-flex',
