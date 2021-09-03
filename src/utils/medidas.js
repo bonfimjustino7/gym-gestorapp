@@ -1,5 +1,5 @@
 export function IMC(peso, altura) {
-  const imc = peso / (altura * altura).toFixed(0);
+  const imc = parseFloat(peso / (altura * altura)).toFixed(2);
   return imc !== Infinity ? imc : 0.0;
 }
 
