@@ -55,10 +55,12 @@ export default function AlunoForm({navigation}) {
   }
 
   useEffect(() => {
-    navigation.navigate('MedicoesForm', {
-      aluno_id: idAluno,
-      redirect: 'AlunoList',
-    });
+    if (idAluno) {
+      navigation.navigate('MedicoesForm', {
+        aluno_id: idAluno,
+        redirect: 'AlunoList',
+      });
+    }
   }, [idAluno]);
 
   return (
