@@ -111,7 +111,15 @@ function PerfilStackScreen() {
           ),
         };
       }}>
-      <PerfilStack.Screen name="Perfil" component={Perfil} />
+      <PerfilStack.Screen
+        name="Perfil"
+        component={Perfil}
+        options={{
+          title: 'Informações da Academia',
+          headerTransparent: true,
+          headerTitleAlign: 'left',
+        }}
+      />
     </PerfilStack.Navigator>
   );
 }

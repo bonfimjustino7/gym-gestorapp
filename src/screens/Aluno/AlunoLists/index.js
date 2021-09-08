@@ -59,7 +59,9 @@ export default function AlunoLists({navigation}) {
   }
 
   useEffect(() => {
-    getMatriculas();
+    if (search || status) {
+      getMatriculas();
+    }
 
     if (status === 'A') {
       navigation.setOptions({title: 'Alunos Ativos'});
