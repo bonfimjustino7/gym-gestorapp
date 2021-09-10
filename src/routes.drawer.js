@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -21,15 +21,44 @@ import HomeIcon from '../src/assets/home_icon.svg';
 import LogoutIcon from '../src/assets/logout.svg';
 import {initials, textTruncate} from './utils/text';
 import MedicoesForm from './screens/Aluno/Medicoes';
+import {BASE_API} from './services/api';
+import Toast from 'react-native-toast-message';
 
 const InitialStack = createStackNavigator();
 const PerfilStack = createStackNavigator();
 
 function InitialStackScreen({navigation, route}) {
+  const {auth, updateNome, logout} = useAuth();
   function isScreenPrimary(routes) {
     const screenName = getFocusedRouteNameFromRoute(route) ?? 'Home';
     return screenName === 'Home';
   }
+
+  async function getDados() {
+    try {
+      const resposta = await BASE_API.get(`/academia/${auth.user_id}/`, {
+        headers: {
+          Authorization: `Token ${auth?.token}`,
+        },
+      });
+
+      updateNome(resposta.data?.nome);
+    } catch (error) {
+      Toast.show({
+        text1: 'Falha na conexão',
+        text2: 'Verifique a conexão com a internet',
+        type: 'error',
+        position: 'bottom',
+      });
+
+      logout();
+    }
+  }
+
+  useEffect(() => {
+    getDados();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <InitialStack.Navigator

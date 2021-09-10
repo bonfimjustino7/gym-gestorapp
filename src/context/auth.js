@@ -10,6 +10,11 @@ export default function AuthProvider({children}) {
     nome: null,
   });
 
+  //TODO criar outro estado para armazenar os dados do gerente
+  function updateNome(novoNome) {
+    setAuthState({...authState, nome: novoNome});
+  }
+
   async function logout() {
     await removeData('@user');
     setAuthState({token: null, email: null, nome: null});
@@ -21,7 +26,7 @@ export default function AuthProvider({children}) {
   }
 
   return (
-    <AuthContext.Provider value={{authState, logout, login}}>
+    <AuthContext.Provider value={{authState, logout, login, updateNome}}>
       {children}
     </AuthContext.Provider>
   );
@@ -34,5 +39,6 @@ export function useAuth() {
     auth: context.authState,
     logout: context.logout,
     login: context.login,
+    updateNome: context.updateNome,
   };
 }

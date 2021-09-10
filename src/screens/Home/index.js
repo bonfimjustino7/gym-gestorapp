@@ -136,7 +136,7 @@ export default function Home({navigation}) {
             height={'130px'}
             elevation={6}
             label="Perfil"
-            onPress={() => console.log('Aluno')}>
+            onPress={() => navigation.navigate('Perfil')}>
             <PerfilSVG />
           </Card>
           <Card
